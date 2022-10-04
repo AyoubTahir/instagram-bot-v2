@@ -5,8 +5,8 @@ import commentBot from "./listCommentbot.js";
 
 const testMode = true;
 
-const emailOrUsername = "tahir.ayoub.dev@gmail.com";
-const password = "1234567891995";
+const emailOrUsername = "";
+const password = "";
 
 const linkOfLikersList = "https://www.instagram.com/p/CiadT-rACEz/liked_by/";
 
