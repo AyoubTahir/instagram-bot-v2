@@ -3,12 +3,15 @@ import stealthPlugin from "puppeteer-extra-plugin-stealth";
 import puppeteer from "puppeteer";
 import commentBot from "./listCommentbot.js";
 
-const testMode = true;
+const testMode = false;
 
 const emailOrUsername = "";
+const accountUsername = "";
 const password = "";
 
 const linkOfLikersList = "https://www.instagram.com/p/CiadT-rACEz/liked_by/";
+
+const numberOfProfiles = 15;
 
 const minDelayBettwenComments = 3; //by minutes
 const maxDelayBettwenComments = 5; //by minutes
@@ -47,6 +50,8 @@ const commentMessages = [
 
   await page.goto("https://www.instagram.com/");
 
+  //await page.waitForNavigation({ waitUntil: "domcontentloaded" });
+
   await page.waitForSelector("input[name='username']");
 
   await page.type("input[name='username']", emailOrUsername, {
@@ -78,7 +83,11 @@ const commentMessages = [
   });
 
   let numberOfComments = 0;
-  for (let j = 0; j < likersList.length && numberOfComments < 15; j++) {
+  for (
+    let j = 0;
+    j < likersList.length && numberOfComments < numberOfProfiles;
+    j++
+  ) {
     // delete value before search
     /*const inputValue = await page.$eval(
           "._aawf._aawg._aexm input",
@@ -95,6 +104,7 @@ const commentMessages = [
           delay: 200,
         });*/
     await page.goto("https://www.instagram.com/" + likersList[j]);
+
     try {
       //after search click in the dropdown menu
       //await page.waitForSelector("._abnx._aeul > div a");
@@ -119,7 +129,7 @@ const commentMessages = [
       await page.waitForTimeout(4000);
 
       //check if already commented
-      const commented = await page.evaluate(() => {
+      const commented = await page.evaluate((accu) => {
         const allComments = document.querySelectorAll(
           "div._ae5q._ae5r._ae5s ul._a9z6._a9za ul._a9ym"
         );
@@ -132,9 +142,9 @@ const commentMessages = [
           );
         }
 
-        return usernames.includes("fordigitalplanners");
-      });
-
+        return usernames.includes(accu);
+      }, accountUsername);
+      console.log(commented + " " + accountUsername);
       if (!commented) {
         await page.type(
           "section[class=' _aaoe _ae5y _ae5z _ae62'] form textarea",
@@ -155,7 +165,7 @@ const commentMessages = [
         numberOfComments++;
         console.log("commenting on " + likersList[j] + "done");
       } else {
-        console.log("No comment for" + likersList[j] + "i already commented");
+        console.log("No comment for " + likersList[j] + "i already commented");
         continue;
       }
 
