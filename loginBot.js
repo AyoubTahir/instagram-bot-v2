@@ -1,10 +1,14 @@
 import { promises } from "fs";
 
 const loginBot = async (page, emailOrUsername, password) => {
-  //load cookies
-  const cookiesString = await promises.readFile("./cookies.json");
-  const oldCookies = JSON.parse(cookiesString);
-  await page.setCookie(...oldCookies);
+  try {
+    //load cookies
+    const cookiesString = await promises.readFile("./cookies.json");
+    const oldCookies = JSON.parse(cookiesString);
+    await page.setCookie(...oldCookies);
+  } catch (err) {
+    console.log("No data saved need to login again!!!");
+  }
 
   await page.goto("https://www.instagram.com/");
 
@@ -26,7 +30,6 @@ const loginBot = async (page, emailOrUsername, password) => {
   await page.waitForTimeout(5000);
 
   const cookies = await page.cookies();
-  console.log(cookies);
   await promises.writeFile("./cookies.json", JSON.stringify(cookies, null, 2));
 };
 

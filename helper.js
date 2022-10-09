@@ -1,4 +1,4 @@
-export const maxNumber = (v1, v2, v3) => {
+export const maxNumber = (v1, v2, v3 = 0) => {
   return Math.max(Math.max(v1, v2), v3);
 };
 

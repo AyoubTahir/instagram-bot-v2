@@ -16,9 +16,9 @@ import dmBot from "./dmBot.js";
 
 const testMode = false;
 
-const emailOrUsername = "";
-const accountUsername = "";
-const password = "";
+const emailOrUsername = "tdigitalstudio"; //tahir.ayoub.dev@gmail.com
+const accountUsername = "tdigitalstudio"; //easyplannerstudio
+const password = "khadija0617760248AA@@"; //1234567891995
 
 const linkOfLikersList = "https://www.instagram.com/p/CjS4R9LrwlE/liked_by/";
 const numberOfUsersToExtract = 500;
@@ -31,7 +31,9 @@ const acitivateCommenting = true;
 const acitivateFollowing = true;
 const acitivateDM = false;
 
-const dmIfNotCommented = true;
+const dmIfNotCommented = true; //will always dm if didnt comment
+
+const alwaysFollowWhatYouHaveDMorCommented = true; //will always follow what you have dm or comment on even if you diseable following
 
 const delayAfterFollow = { min: 40, max: 80 }; //by seconds
 
@@ -143,17 +145,19 @@ const DMMessages = [
     numberOfPrivateProfilesToDM,
     numberOfProfilesToCommentOn
   );
-  console.log("Start working on " + numberOfProfilesToWorkOn + " profiles");
-  for (
-    let j = 0;
-    j < likersList.length && numberOfComments < numberOfProfilesToWorkOn;
-    j++
-  ) {
+
+  console.log(
+    "Start working on " +
+      maxNumber(numberOfProfilesToWorkOn, likersList.length) +
+      " profiles"
+  );
+  for (let j = 0; j < likersList.length; j++) {
     await page.goto("https://www.instagram.com/" + likersList[j]);
 
     let followed = false;
     let isCommentd = false;
     let isDM = false;
+    let openFollow = false;
 
     try {
       let isPrivateAccount = await isElementExistWait(
@@ -161,10 +165,27 @@ const DMMessages = [
         "article[class='_aayp'] > div > div > div._ac7v._aang > div a",
         10000
       );
+
       console.log("privacy: " + isPrivateAccount);
+
       if (
-        acitivateFollowing &&
-        numberOfFollows < numberOfPrivateProfilesToFollow
+        !isPrivateAccount &&
+        numberOfComments < numberOfProfilesToCommentOn &&
+        alwaysFollowWhatYouHaveDMorCommented
+      ) {
+        openFollow = true;
+      } else if (
+        numberOfDMs < numberOfPrivateProfilesToDM &&
+        alwaysFollowWhatYouHaveDMorCommented
+      ) {
+        openFollow = true;
+      } else {
+        openFollow = false;
+      }
+      if (
+        (acitivateFollowing &&
+          numberOfFollows < numberOfPrivateProfilesToFollow) ||
+        openFollow
       ) {
         //Following user
         if (await followBot(page)) {
@@ -241,13 +262,21 @@ const DMMessages = [
         }
       }
     } catch (error) {
-      console.log("somthing wrong");
+      console.log("somthing wrong!!!! let's skip this one");
       continue;
     }
 
     console.log("--> " + numberOfFollows + " followed now");
     console.log("--> " + numberOfComments + " comments now");
     console.log("--> " + numberOfDMs + " dms sent now");
+    console.log("*------------------***-------------------*\n");
+    if (
+      numberOfFollows === numberOfPrivateProfilesToFollow &&
+      numberOfComments === numberOfProfilesToCommentOn &&
+      numberOfDMs === numberOfPrivateProfilesToDM
+    ) {
+      break;
+    }
 
     if (followed & !isDM & !isCommentd) {
       await waitRandomMuniteDelay(

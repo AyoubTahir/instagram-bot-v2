@@ -1,14 +1,10 @@
 const extractUsers = async (page, linkOfLikersList, numberOfUsersToExtract) => {
   await page.goto(linkOfLikersList);
 
-  await page.waitForNavigation({ waitUntil: "networkidle2" });
-
-  console.log(await scrapeInfiniteScrollItems(page, numberOfUsersToExtract));
-
-  await page.waitForTimeout(3000);
+  await page.waitForTimeout(10000);
 
   console.log("Extracting usernames from the list");
-
+  /*
   const likersList = await page.evaluate(() => {
     const allUsers = document.querySelectorAll(
       "div[class='_ab8w  _ab94 _ab97 _ab9f _ab9k _ab9p  _ab9- _aba8 _abcm']"
@@ -18,52 +14,51 @@ const extractUsers = async (page, linkOfLikersList, numberOfUsersToExtract) => {
       likerUsernames.push(user.querySelector("a div div div").innerText);
     });
     return likerUsernames;
-  });
+  });*/
 
-  return likersList;
+  return await scrapeInfiniteScrollItems(page, numberOfUsersToExtract);
 };
 
 const scrapeInfiniteScrollItems = async (page, itemTargetCount) => {
   let items = [];
 
   let previousHeight;
-  let previousItemsLength = 0;
 
-  while (itemTargetCount > items.length) {
-    items = await page.evaluate(() => {
-      const items = Array.from(
-        document.querySelectorAll(
-          "div[class='_ab8w  _ab94 _ab97 _ab9f _ab9k _ab9p  _ab9- _aba8 _abcm']"
-        )
-      );
-      return items
-        .filter(
-          (item) =>
-            item.querySelector(
-              "div._ab8w._ab94._ab97._ab9h._ab9k._ab9p._abb0._abcm button._acan._acap._acas"
-            ) !== null
-        )
-        .map(
-          (cleanedItem) => cleanedItem.querySelector("a div div div").innerText
+  try {
+    while (itemTargetCount > items.length) {
+      items = await page.evaluate(() => {
+        const items = Array.from(
+          document.querySelectorAll(
+            "div[class='_ab8w  _ab94 _ab97 _ab9f _ab9k _ab9p  _ab9- _aba8 _abcm']"
+          )
         );
-    });
+        return items
+          .filter(
+            (item) =>
+              item.querySelector(
+                "div._ab8w._ab94._ab97._ab9h._ab9k._ab9p._abb0._abcm button._acan._acap._acas"
+              ) !== null
+          )
+          .map(
+            (cleanedItem) =>
+              cleanedItem.querySelector("a div div div").innerText
+          );
+      });
 
-    if (previousItemsLength === items.length) break;
-    previousItemsLength = items.length;
+      previousHeight = await page.evaluate(
+        "document.documentElement.scrollHeight"
+      );
+      await page.evaluate(
+        "window.scrollTo(0, document.documentElement.scrollHeight)"
+      );
+      await page.waitForFunction(
+        `document.documentElement.scrollHeight > ${previousHeight}`
+      );
+      await page.waitForTimeout(1000);
+    }
+  } catch (err) {}
 
-    console.log(items);
-
-    previousHeight = await page.evaluate(
-      "document.documentElement.scrollHeight"
-    );
-    await page.evaluate(
-      "window.scrollTo(0, document.documentElement.scrollHeight)"
-    );
-    await page.waitForFunction(
-      `document.documentElement.scrollHeight > ${previousHeight}`
-    );
-    await page.waitForTimeout(1000);
-  }
+  console.log(items.length + " username extracted");
 
   return items;
 };
