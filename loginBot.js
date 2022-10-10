@@ -1,15 +1,19 @@
 import { promises } from "fs";
 
-const loginBot = async (page, emailOrUsername, password) => {
+const loginBot = async (page, emailOrUsername, password, cookiesFileName) => {
   try {
     //load cookies
-    const cookiesString = await promises.readFile("./cookies.json");
+    const cookiesString = await promises.readFile(
+      "./" + cookiesFileName + ".json"
+    );
     const oldCookies = JSON.parse(cookiesString);
     await page.setCookie(...oldCookies);
+    console.log("./" + cookiesFileName + ".json");
   } catch (err) {
     console.log("No data saved need to login again!!!");
   }
 
+  await page.waitForTimeout(3000);
   await page.goto("https://www.instagram.com/");
 
   //await page.waitForNavigation({ waitUntil: "domcontentloaded" });
@@ -27,10 +31,12 @@ const loginBot = async (page, emailOrUsername, password) => {
     await page.click("#loginForm button[type='submit']");
   } catch (err) {}
 
-  await page.waitForTimeout(5000);
-
   const cookies = await page.cookies();
-  await promises.writeFile("./cookies.json", JSON.stringify(cookies, null, 2));
+  await promises.writeFile(
+    "./" + cookiesFileName + ".json",
+    JSON.stringify(cookies, null, 2)
+  );
+  await page.waitForTimeout(5000);
 };
 
 export default loginBot;

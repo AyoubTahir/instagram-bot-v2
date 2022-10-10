@@ -15,32 +15,22 @@ import commentBot from "./commentBot.js";
 import dmBot from "./dmBot.js";
 
 const testMode = false;
-
 const emailOrUsername = "tdigitalstudio"; //tahir.ayoub.dev@gmail.com
 const accountUsername = "tdigitalstudio"; //easyplannerstudio
 const password = "khadija0617760248AA@@"; //1234567891995
-
-const linkOfLikersList = "https://www.instagram.com/p/CjS4R9LrwlE/liked_by/";
+const linkOfLikersList = "https://www.instagram.com/p/CjYgnyUAMLO/liked_by/";
 const numberOfUsersToExtract = 500;
-
-const numberOfPrivateProfilesToFollow = 50;
-const numberOfPrivateProfilesToDM = 30;
+const numberOfPrivateProfilesToFollow = 0;
+const numberOfPrivateProfilesToDM = 0;
 const numberOfProfilesToCommentOn = 35;
-
 const acitivateCommenting = true;
 const acitivateFollowing = true;
 const acitivateDM = false;
-
-const dmIfNotCommented = true; //will always dm if didnt comment
-
+const dmIfNotCommented = false; //will always dm if didnt comment
 const alwaysFollowWhatYouHaveDMorCommented = true; //will always follow what you have dm or comment on even if you diseable following
-
 const delayAfterFollow = { min: 40, max: 80 }; //by seconds
-
 const delayAfterComment = { min: 1, max: 2 }; //by minutes
-
 const delayBettwenProfiles = { min: 6, max: 10 }; //by minutes
-
 const delayBettwenProfilesOnlyFollow = { min: 5, max: 7 }; //by minutes
 
 let emo1 = String.fromCodePoint("0x" + "🙌".codePointAt(0).toString(16));
@@ -104,7 +94,7 @@ const DMMessages = [
     emo1,
 ];
 
-(async () => {
+const instaBot = async (account) => {
   puppeteerExtra.use(stealthPlugin());
   const browser = await puppeteerExtra.launch({
     args: [
@@ -127,13 +117,18 @@ const DMMessages = [
   await page.setDefaultNavigationTimeout(0);
 
   //Login to instagram account
-  await loginBot(page, emailOrUsername, password);
+  await loginBot(
+    page,
+    account.emailOrUsername,
+    account.password,
+    account.cookiesFileName
+  );
 
   //Extract usernames from the giving link
   const likersList = await extractUsers(
     page,
-    linkOfLikersList,
-    numberOfUsersToExtract
+    account.linkOfLikersList,
+    account.numberOfUsersToExtract
   );
 
   let numberOfFollows = 0;
@@ -141,9 +136,9 @@ const DMMessages = [
   let numberOfDMs = 0;
   //Get max bettwen 3 numbers
   const numberOfProfilesToWorkOn = maxNumber(
-    numberOfPrivateProfilesToFollow,
-    numberOfPrivateProfilesToDM,
-    numberOfProfilesToCommentOn
+    account.numberOfPrivateProfilesToFollow,
+    account.numberOfPrivateProfilesToDM,
+    account.numberOfProfilesToCommentOn
   );
 
   console.log(
@@ -170,21 +165,22 @@ const DMMessages = [
 
       if (
         !isPrivateAccount &&
-        numberOfComments < numberOfProfilesToCommentOn &&
-        alwaysFollowWhatYouHaveDMorCommented
+        numberOfComments < account.numberOfProfilesToCommentOn &&
+        account.alwaysFollowWhatYouHaveDMorCommented
       ) {
         openFollow = true;
       } else if (
-        numberOfDMs < numberOfPrivateProfilesToDM &&
-        alwaysFollowWhatYouHaveDMorCommented
+        numberOfDMs < account.numberOfPrivateProfilesToDM &&
+        account.alwaysFollowWhatYouHaveDMorCommented
       ) {
         openFollow = true;
       } else {
         openFollow = false;
       }
+
       if (
-        (acitivateFollowing &&
-          numberOfFollows < numberOfPrivateProfilesToFollow) ||
+        (account.acitivateFollowing &&
+          numberOfFollows < account.numberOfPrivateProfilesToFollow) ||
         openFollow
       ) {
         //Following user
@@ -193,27 +189,29 @@ const DMMessages = [
           followed = true;
           numberOfFollows++;
           if (
-            (acitivateCommenting && !isPrivateAccount) ||
-            acitivateDM ||
-            dmIfNotCommented
+            (account.acitivateCommenting && !isPrivateAccount) ||
+            account.acitivateDM ||
+            account.dmIfNotCommented
           ) {
             await waitRandomSecondDelay(
               page,
-              delayAfterFollow,
-              acitivateCommenting && !isPrivateAccount ? "comment" : "Dm"
+              account.delayAfterFollow,
+              account.acitivateCommenting && !isPrivateAccount
+                ? "comment"
+                : "Dm"
             );
           }
         } else {
           console.log(likersList[j] + " Already followed");
-          if (!acitivateCommenting && !acitivateDM) {
+          if (!account.acitivateCommenting && !account.acitivateDM) {
             continue;
           }
         }
       }
 
       if (
-        acitivateCommenting &&
-        numberOfComments < numberOfProfilesToCommentOn
+        account.acitivateCommenting &&
+        numberOfComments < account.numberOfProfilesToCommentOn
       ) {
         if (!isPrivateAccount) {
           await page.waitForTimeout(3500);
@@ -222,23 +220,27 @@ const DMMessages = [
             await commentBot(
               page,
               likersList[j],
-              commentMessages,
-              accountUsername,
-              testMode
+              account.commentMessages,
+              account.accountUsername,
+              account.testMode
             )
           ) {
             numberOfComments++;
             isCommentd = true;
             console.log("Commented!!!");
 
-            if (acitivateDM) {
-              await waitRandomMuniteDelay(page, delayAfterComment, "Dm");
+            if (account.acitivateDM) {
+              await waitRandomMuniteDelay(
+                page,
+                account.delayAfterComment,
+                "Dm"
+              );
             }
           } else {
             console.log(
               "No comment for " + likersList[j] + "i already commented"
             );
-            if (!acitivateDM) continue;
+            if (!account.acitivateDM) continue;
           }
         } else {
           console.log(
@@ -248,12 +250,15 @@ const DMMessages = [
       }
 
       if (
-        (acitivateDM || (isPrivateAccount && dmIfNotCommented)) &&
-        numberOfDMs < numberOfPrivateProfilesToDM
+        (account.acitivateDM ||
+          (isPrivateAccount && account.dmIfNotCommented)) &&
+        numberOfDMs < account.numberOfPrivateProfilesToDM
       ) {
         await page.waitForTimeout(3000);
 
-        if (await dmBot(page, likersList[j], DMMessages, testMode)) {
+        if (
+          await dmBot(page, likersList[j], account.DMMessages, account.testMode)
+        ) {
           numberOfDMs++;
           isDM = true;
           console.log("message sent!!!");
@@ -271,9 +276,9 @@ const DMMessages = [
     console.log("--> " + numberOfDMs + " dms sent now");
     console.log("*------------------***-------------------*\n");
     if (
-      numberOfFollows === numberOfPrivateProfilesToFollow &&
-      numberOfComments === numberOfProfilesToCommentOn &&
-      numberOfDMs === numberOfPrivateProfilesToDM
+      numberOfFollows === account.numberOfPrivateProfilesToFollow &&
+      numberOfComments === account.numberOfProfilesToCommentOn &&
+      numberOfDMs === account.numberOfPrivateProfilesToDM
     ) {
       break;
     }
@@ -281,17 +286,19 @@ const DMMessages = [
     if (followed & !isDM & !isCommentd) {
       await waitRandomMuniteDelay(
         page,
-        delayBettwenProfilesOnlyFollow,
+        account.delayBettwenProfilesOnlyFollow,
         "go to the next user"
       );
     } else if (isDM || isCommentd) {
       await waitRandomMuniteDelay(
         page,
-        delayBettwenProfiles,
+        account.delayBettwenProfiles,
         "go to the next user"
       );
     } else console.log("nothing to do for this user skip");
   }
 
   console.log("finished!!!");
-})();
+};
+
+export default instaBot;

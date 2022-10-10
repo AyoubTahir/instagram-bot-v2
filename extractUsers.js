@@ -52,7 +52,8 @@ const scrapeInfiniteScrollItems = async (page, itemTargetCount) => {
         "window.scrollTo(0, document.documentElement.scrollHeight)"
       );
       await page.waitForFunction(
-        `document.documentElement.scrollHeight > ${previousHeight}`
+        `document.documentElement.scrollHeight > ${previousHeight}`,
+        { timeout: 5000 }
       );
       await page.waitForTimeout(1000);
     }
