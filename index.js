@@ -14,88 +14,7 @@ import followBot from "./followBot.js";
 import commentBot from "./commentBot.js";
 import dmBot from "./dmBot.js";
 
-const testMode = false;
-const emailOrUsername = "tdigitalstudio"; //tahir.ayoub.dev@gmail.com
-const accountUsername = "tdigitalstudio"; //easyplannerstudio
-const password = "khadija0617760248AA@@"; //1234567891995
-const linkOfLikersList = "https://www.instagram.com/p/CjYgnyUAMLO/liked_by/";
-const numberOfUsersToExtract = 500;
-const numberOfPrivateProfilesToFollow = 0;
-const numberOfPrivateProfilesToDM = 0;
-const numberOfProfilesToCommentOn = 35;
-const acitivateCommenting = true;
-const acitivateFollowing = true;
-const acitivateDM = false;
-const dmIfNotCommented = false; //will always dm if didnt comment
-const alwaysFollowWhatYouHaveDMorCommented = true; //will always follow what you have dm or comment on even if you diseable following
-const delayAfterFollow = { min: 40, max: 80 }; //by seconds
-const delayAfterComment = { min: 1, max: 2 }; //by minutes
-const delayBettwenProfiles = { min: 6, max: 10 }; //by minutes
-const delayBettwenProfilesOnlyFollow = { min: 5, max: 7 }; //by minutes
-
-let emo1 = String.fromCodePoint("0x" + "🙌".codePointAt(0).toString(16));
-let emo2 = String.fromCodePoint("0x" + "✨".codePointAt(0).toString(16));
-let emo3 = String.fromCodePoint("0x" + "⬆️".codePointAt(0).toString(16));
-const commentMessages = [
-  "Can you give me your feedback on this new digital budget planner? and grab a free weekly planner " +
-    emo1 +
-    " you can find it in my profile",
-
-  "I would like to hear your thoughts about this new digital budget planner and get a free weekly planner " +
-    emo1 +
-    " you can find it in my bio",
-
-  "Would you mind sharing your thoughts about this new digital budget planner with me? " +
-    emo1 +
-    " you can also grab a free weekly planner in my bio",
-
-  "What do you think of this digital budget planner? " +
-    emo1 +
-    " (Free weekly planner available) you can find it in my profile",
-  "Have you tried this digital budget planner? " +
-    emo1 +
-    " also, check out my profile for a free weekly planner",
-
-  "I was wondering if you would mind sharing your thoughts about this digital budget planner, check it out in my bio",
-
-  "In my bio, I have a link to a digital budget planner. " +
-    emo1 +
-    " Would you mind sharing your thoughts about it?",
-];
-const DMMessages = [
-  "you seem to be interested in planners like me, so be sure to check out my weekly planner! You can grab it for free by clicking the link in my bio." +
-    emo1,
-
-  "I noticed that you're interested in planners, so I have included a link in my profile for you to download my weekly planner for free.",
-
-  "I noticed you're interested in planners, you can get my free weekly planner " +
-    emo2 +
-    " from the link in my bio " +
-    emo3 +
-    ".",
-
-  "if you are " +
-    emo2 +
-    " interested in planners like me, you'll love my free weekly planner. You can find it in my bio " +
-    emo3 +
-    ".",
-
-  "it seems like you are interested in planners, " +
-    emo2 +
-    " consider checking out my free weekly planner, and I don't think you will be disappointed.",
-
-  "you seem interested in planners " +
-    emo2 +
-    ", make sure to grab my free half-hour weekly planner, I think you'll love it. " +
-    emo3 +
-    " Link in my bio",
-
-  "I was wondering if you would mind sharing your thoughts about this digital budget planner, check it out in my bio " +
-    emo1,
-];
-
-const instaBot = async (account) => {
-  puppeteerExtra.use(stealthPlugin());
+const instaBot = async (account, puppeteerExtra) => {
   const browser = await puppeteerExtra.launch({
     args: [
       "--start-maximized",
@@ -110,6 +29,8 @@ const instaBot = async (account) => {
     defaultViewport: null,
     executablePath:
       "C://Program Files//Google//Chrome//Application//chrome.exe",
+    /*userDataDir:
+      "C://Users//Tahir Ayoub//AppData//Local//Google//Chrome//User Data",*/
   });
 
   const page = await browser.newPage();
@@ -276,9 +197,9 @@ const instaBot = async (account) => {
     console.log("--> " + numberOfDMs + " dms sent now");
     console.log("*------------------***-------------------*\n");
     if (
-      numberOfFollows === account.numberOfPrivateProfilesToFollow &&
-      numberOfComments === account.numberOfProfilesToCommentOn &&
-      numberOfDMs === account.numberOfPrivateProfilesToDM
+      numberOfFollows >= account.numberOfPrivateProfilesToFollow &&
+      numberOfComments >= account.numberOfProfilesToCommentOn &&
+      numberOfDMs >= account.numberOfPrivateProfilesToDM
     ) {
       break;
     }
