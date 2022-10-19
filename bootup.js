@@ -12,9 +12,9 @@ const emoji = [
 const accounts = [
   {
     testMode: false,
-    emailOrUsername: "tdigitalstudio",
-    accountUsername: "tdigitalstudio",
-    password: "khadija0617760248AA@@",
+    emailOrUsername: "",
+    accountUsername: "",
+    password: "",
     cookiesFileName: "cookies",
     linkOfLikersList: "https://www.instagram.com/p/CjYgnyUAMLO/liked_by/",
     numberOfUsersToExtract: 1000,
@@ -90,19 +90,19 @@ const accounts = [
   },
   {
     testMode: false,
-    emailOrUsername: "fordigitalplans",
-    accountUsername: "fordigitalplans",
-    password: "khadija0617760248A",
+    emailOrUsername: "",
+    accountUsername: "",
+    password: "",
     cookiesFileName: "cookies2",
     linkOfLikersList: "https://www.instagram.com/p/CjZAu7HKTM2/liked_by/",
     numberOfUsersToExtract: 1000,
     numberOfPrivateProfilesToFollow: 0,
-    numberOfPrivateProfilesToDM: 0,
+    numberOfPrivateProfilesToDM: 10,
     numberOfProfilesToCommentOn: 20,
     acitivateCommenting: true,
     acitivateFollowing: true,
     acitivateDM: false,
-    dmIfNotCommented: false, //will always dm if didnt comment
+    dmIfNotCommented: true, //will always dm if didnt comment
     alwaysFollowWhatYouHaveDMorCommented: true, //will always follow what you have dm or comment on even if you diseable following
     delayAfterFollow: { min: 40, max: 80 }, //by seconds
     delayAfterComment: { min: 1, max: 2 }, //by minutes
@@ -157,13 +157,13 @@ const pinterestAccounts = [
   {
     manualMode: false,
     testMode: false,
-    email: "ayoub1tahir@gmail.com",
-    password: "khadija0617760248A",
+    email: "",
+    password: "",
     cookiesFileName: "pincookies",
     linkToExtarct: "https://www.pinterest.com/pin/344173596536362541/",
     numberOfUsersToExtract: 1000,
-    numberOfProfilesToFollow: 50,
-    numberOfProfilesToDM: 50,
+    numberOfProfilesToFollow: 10,
+    numberOfProfilesToDM: 10,
     acitivateFollowing: true,
     acitivateDM: true,
     delayAfterFollow: { min: 40, max: 80 }, //by seconds
@@ -206,8 +206,8 @@ const pinterestAccounts = [
 (async () => {
   puppeteerExtra.use(stealthPlugin());
   instaBot(accounts[0], puppeteerExtra);
-  instaBot(accounts[1], puppeteerExtra);
-  pinterestBot(pinterestAccounts[0], puppeteerExtra);
+  //instaBot(accounts[1], puppeteerExtra);
+  //pinterestBot(pinterestAccounts[0], puppeteerExtra);
 })();
 /*
 function sleep(ms) {

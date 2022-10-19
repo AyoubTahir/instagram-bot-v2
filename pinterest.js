@@ -90,7 +90,7 @@ const pinterestBot = async (account, puppeteerExtra) => {
 
       if (account.acitivateDM && followed) {
         try {
-          for (let k = 0; k < 2; k++) {
+          for (let k = 0; k < 1; k++) {
             await page.waitForSelector(
               "div.gjz.hs0.un8.tkf.TB_ div.zI7.iyn.Hsu button"
             );
