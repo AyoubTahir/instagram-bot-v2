@@ -31,12 +31,13 @@ const loginBot = async (page, emailOrUsername, password, cookiesFileName) => {
     await page.click("#loginForm button[type='submit']");
   } catch (err) {}
 
+  await page.waitForTimeout(5000);
+
   const cookies = await page.cookies();
   await promises.writeFile(
     "./" + cookiesFileName + ".json",
     JSON.stringify(cookies, null, 2)
   );
-  await page.waitForTimeout(5000000);
 };
 
 export default loginBot;

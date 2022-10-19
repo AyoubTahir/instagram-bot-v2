@@ -1,6 +1,6 @@
 import puppeteerExtra from "puppeteer-extra";
 import stealthPlugin from "puppeteer-extra-plugin-stealth";
-//import puppeteer from "puppeteer";
+import homeScroll from "./homeScroll.js";
 import loginBot from "./loginBot.js";
 import extractUsers from "./extractUsers.js";
 import {
@@ -205,17 +205,25 @@ const instaBot = async (account, puppeteerExtra) => {
     }
 
     if (followed & !isDM & !isCommentd) {
-      await waitRandomMuniteDelay(
-        page,
-        account.delayBettwenProfilesOnlyFollow,
-        "go to the next user"
-      );
+      if (!account.scrollWhileWaiting) {
+        await waitRandomMuniteDelay(
+          page,
+          account.delayBettwenProfilesOnlyFollow,
+          "go to the next user"
+        );
+      } else {
+        await homeScroll(page, account.delayBettwenProfilesOnlyFollow);
+      }
     } else if (isDM || isCommentd) {
-      await waitRandomMuniteDelay(
-        page,
-        account.delayBettwenProfiles,
-        "go to the next user"
-      );
+      if (!account.scrollWhileWaiting) {
+        await waitRandomMuniteDelay(
+          page,
+          account.delayBettwenProfiles,
+          "go to the next user"
+        );
+      } else {
+        await homeScroll(page, account.delayBettwenProfiles);
+      }
     } else console.log("nothing to do for this user skip");
   }
 

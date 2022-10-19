@@ -30,6 +30,7 @@ const accounts = [
     delayAfterComment: { min: 1, max: 2 }, //by minutes
     delayBettwenProfiles: { min: 6, max: 10 }, //by minutes
     delayBettwenProfilesOnlyFollow: { min: 5, max: 7 }, //by minutes
+    scrollWhileWaiting: true,
     commentMessages: [
       "Can you give me your feedback on this new digital budget planner? and grab a free weekly planner " +
         emoji[0] +
@@ -108,6 +109,7 @@ const accounts = [
     delayAfterComment: { min: 1, max: 2 }, //by minutes
     delayBettwenProfiles: { min: 6, max: 10 }, //by minutes
     delayBettwenProfilesOnlyFollow: { min: 5, max: 7 }, //by minutes
+    scrollWhileWaiting: true,
     commentMessages: [
       "grab a free weekly planner " +
         emoji[0] +
