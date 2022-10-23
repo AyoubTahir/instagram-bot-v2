@@ -3,16 +3,6 @@ const extractUsers = async (page, linkToExtarct, numberOfUsersToExtract) => {
     waitUntil: "load",
   });
 
-  //profile
-  /*await page.waitForSelector(
-    "#__PWS_ROOT__ > div:nth-child(1) > div.appContent > div > div > div > div.Jea.m2F.mQ8.zI7.iyn.Hsu > div > div > div:nth-child(4) > div > div:nth-child(1) > div > span",
-    { timeout: 5000 }
-  );
-
-  await page.click(
-    "#__PWS_ROOT__ > div:nth-child(1) > div.appContent > div > div > div > div.Jea.m2F.mQ8.zI7.iyn.Hsu > div > div > div:nth-child(4) > div > div:nth-child(1) > div > span"
-  );*/
-
   //pin
   await page.waitForSelector(
     "#__PWS_ROOT__ > div:nth-child(1) > div.appContent > div > div > div > div > div.Closeup.Module > div > div > div > div > div.m2F.zI7.iyn.Hsu > div > div > div > div > div > div > div > div > div:nth-child(2) > div > div.Jea.jzS.zI7.iyn.Hsu > div > div > div.jzS.ujU.un8.C9i.TB_ > div:nth-child(3) > div > div > div > div.Shl.zI7.iyn.Hsu > div",
@@ -24,17 +14,6 @@ const extractUsers = async (page, linkToExtarct, numberOfUsersToExtract) => {
   );
 
   console.log("Extracting usernames from the list");
-  /*
-  const likersList = await page.evaluate(() => {
-    const allUsers = document.querySelectorAll(
-      "div[class='_ab8w  _ab94 _ab97 _ab9f _ab9k _ab9p  _ab9- _aba8 _abcm']"
-    );
-    let likerUsernames = [];
-    allUsers.forEach((user) => {
-      likerUsernames.push(user.querySelector("a div div div").innerText);
-    });
-    return likerUsernames;
-  });*/
 
   return await scrapeInfiniteScrollItems(page, numberOfUsersToExtract);
 };
@@ -71,6 +50,51 @@ const scrapeInfiniteScrollItems = async (page, itemTargetCount) => {
   } catch (err) {}
 
   console.log(items.length + " username extracted");
+
+  return items;
+};
+
+const scrapeInfiniteScrollItemsFollowers = async (page, itemTargetCount) => {
+  let items = [];
+
+  let previousHeight;
+
+  try {
+    while (itemTargetCount > items.length) {
+      items = await page.evaluate(() => {
+        const items = Array.from(
+          document.querySelector("div._aano > div > div").children
+        );
+        return items
+          .filter(
+            (item) =>
+              item.querySelector(
+                "div._ab8w._ab94._ab97._ab9h._ab9k._ab9p._abb0._abcm button._acan._acap._acas"
+              ) !== null
+          )
+          .map(
+            (cleanedItem) =>
+              cleanedItem.querySelector(
+                "span._aacl._aaco._aacw._aacx._aad7._aade div"
+              ).innerText
+          );
+      });
+
+      previousHeight = await page.evaluate(
+        "ocument.querySelector('div.XbT.zI7.iyn.Hsu').children[0].scrollHeight"
+      );
+      await page.evaluate(
+        "document.querySelector('div.XbT.zI7.iyn.Hsu').children[0].scrollTo(0,document.querySelector('div.XbT.zI7.iyn.Hsu').children[0].scrollHeight)"
+      );
+      await page.waitForFunction(
+        `ocument.querySelector('div.XbT.zI7.iyn.Hsu').children[0].scrollHeight > ${previousHeight}`,
+        { timeout: 5000 }
+      );
+      await page.waitForTimeout(2000);
+    }
+  } catch (err) {}
+
+  console.log(items.length + " usernames extracted from followers List");
 
   return items;
 };

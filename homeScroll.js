@@ -1,4 +1,5 @@
 const homeScroll = async (page, delayArr) => {
+  await page.waitForTimeout(10000);
   await page.goto("https://www.instagram.com/", { waitUntil: "load" });
 
   try {
@@ -25,7 +26,7 @@ const homeScroll = async (page, delayArr) => {
   for (let i = 1; Date.now() < whenToStop; i++) {
     try {
       await page.evaluate((scCounter) => {
-        window.scrollTo(0, scCounter);
+        window.scrollTo({ top: scCounter, behavior: "smooth" });
       }, scrollCounter);
       scrollCounter = scrollCounter + 800;
     } catch (err) {

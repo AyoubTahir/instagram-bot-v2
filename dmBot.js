@@ -72,10 +72,9 @@ const dmBot = async (page, likerUser, DMMessages, testMode) => {
     await page.waitForTimeout(5000);
     await page.type(
       "div._ab8w._ab94._ab99._ab9f._ab9m._ab9o._abbh._abcm textarea",
-      "Hi " +
+      "Hi, " /*
         likerUser +
-        ", " +
-        DMMessages[Math.floor(Math.random() * DMMessages.length)],
+        ", " +*/ + DMMessages[Math.floor(Math.random() * DMMessages.length)],
       {
         delay: 150,
       }

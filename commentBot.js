@@ -23,8 +23,8 @@ const commentBot = async (
     console.log("commenting on " + likerUser);
     await page.type(
       "section[class=' _aaoe _ae5y _ae5z _ae62'] form textarea",
-      /*"@" +*/
-      likerUser +
+      "@ " +
+        likerUser +
         " " +
         commentMessages[Math.floor(Math.random() * commentMessages.length)],
       {
