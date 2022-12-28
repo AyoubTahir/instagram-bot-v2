@@ -33,7 +33,7 @@ const accounts = [
     delayBettwenProfilesOnlyFollow: { min: 5, max: 7 }, //by minutes
     scrollWhileWaiting: true,
     commentMessages: [
-      "Can you give me your feedback on this new mega planner bundle? and grab a free weekly planner " +
+      "gdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgbcvbcvbcvbcvbcvbdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdfgdf" +
         emoji[0] +
         " you can find it in my profile",
 
