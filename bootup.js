@@ -39,7 +39,7 @@ const accounts = [
 
       "I would like to hear your thoughts about this new mega planner bundle and get a free weekly planner " +
         emoji[0] +
-        " you can find it in my bio ",
+        " you can find it in my bio",
 
       "Would you mind sharing your thoughts about this new mega planner bundle with me? " +
         emoji[0] +
